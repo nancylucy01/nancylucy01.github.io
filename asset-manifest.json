@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/nancylucy01/static/css/main.9d5b29c0.chunk.css",
+    "main.js": "/nancylucy01/static/js/main.d6dd160b.chunk.js",
+    "main.js.map": "/nancylucy01/static/js/main.d6dd160b.chunk.js.map",
+    "runtime-main.js": "/nancylucy01/static/js/runtime-main.a85e5748.js",
+    "runtime-main.js.map": "/nancylucy01/static/js/runtime-main.a85e5748.js.map",
+    "static/js/2.e5dbfae9.chunk.js": "/nancylucy01/static/js/2.e5dbfae9.chunk.js",
+    "static/js/2.e5dbfae9.chunk.js.map": "/nancylucy01/static/js/2.e5dbfae9.chunk.js.map",
+    "static/js/3.1555564e.chunk.js": "/nancylucy01/static/js/3.1555564e.chunk.js",
+    "static/js/3.1555564e.chunk.js.map": "/nancylucy01/static/js/3.1555564e.chunk.js.map",
+    "index.html": "/nancylucy01/index.html",
+    "static/css/main.9d5b29c0.chunk.css.map": "/nancylucy01/static/css/main.9d5b29c0.chunk.css.map",
+    "static/js/2.e5dbfae9.chunk.js.LICENSE.txt": "/nancylucy01/static/js/2.e5dbfae9.chunk.js.LICENSE.txt",
+    "static/media/logo.6ce24c58.svg": "/nancylucy01/static/media/logo.6ce24c58.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a85e5748.js",
+    "static/js/2.e5dbfae9.chunk.js",
+    "static/css/main.9d5b29c0.chunk.css",
+    "static/js/main.d6dd160b.chunk.js"
+  ]
+}
