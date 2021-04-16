@@ -260,7 +260,7 @@ class Home extends React.Component {
             <Row>
               <Col>
                 <Form.Group>
-                  <Form.Label>Start Location (x-coord)</Form.Label>
+                  <Form.Label>Start Location (longitude)</Form.Label>
                   <Form.Control
                     onChange={this.onChangeTripsX}
                     type="number"/>
@@ -268,7 +268,7 @@ class Home extends React.Component {
               </Col>
               <Col>
                 <Form.Group>
-                  <Form.Label>Start Location (y-coord)</Form.Label>
+                  <Form.Label>Start Location (latitude)</Form.Label>
                   <Form.Control
                     onChange={this.onChangeTripsY}
                     type="number"/>
@@ -500,14 +500,14 @@ class CreateTrip extends React.Component {
             </Row>
             <Row>
               <Col>
-              Trip Location (x-coord)
+              Trip Location (longitude)
                 <FormControl 
                 type = "number"
                 onChange={this.onChangeTripsX}
                 />
               </Col>
               <Col>
-              Trip Location (y-coord)
+              Trip Location (latitude)
                 <FormControl 
                 type = "number"
                 onChange={this.onChangeTripsY}
