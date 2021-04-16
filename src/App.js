@@ -37,58 +37,6 @@ class SearchBar extends React.Component {
     )
   }
 }
-
-class Stepper extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: 0
-    };
-    //To handle changes to an alternate 'this', create a parent class and have each update in render
-    this.handleChange = this.handleChange.bind(this);
-    this.handlePlus = this.handlePlus.bind(this);
-    this.handleMinus = this.handleMinus.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({ value: this.state.value });
-  }
-
-  handlePlus(event) {
-    console.log(this.state.value);
-    this.setState({ value: this.state.value + 1})
-  }
-  handleMinus(event) {
-    if (this.state.value > 0) {
-      this.setState({ value: this.state.value - 1})
-    }
-  }
-  render() {
-    return (
-      <div>
-        <InputGroup
-         
-        >
-          <InputGroup.Prepend>
-            <Button 
-            variant="outline-success"
-            onClick={this.handlePlus}
-            >+</Button>
-            <Button
-            variant="outline-success"
-            onClick={this.handleMinus}
-            > - </Button>
-          </InputGroup.Prepend>
-          <FormControl 
-            onChange={this.handleChange} 
-            value = {this.state.value + " days"}
-
-          />
-        </InputGroup>
-      </div>
-    )
-  }
-}
 const Trips = props => (
   <tr>
       <td>{props.trips.trips_name}</td>
@@ -105,7 +53,63 @@ class Home extends React.Component {
     super(props);
     this.state = {
       trips: [], 
-    };
+      trips_name: '',
+      trips_description: '',
+      trips_difficulty: 'Beginner',
+      trips_days: 0,
+      trips_x: 0,
+      trips_y: 0,
+      trips_type: 'Hiking',
+      trips_distance: 'Hiking'
+    }
+    this.onChangeTripsName = this.onChangeTripsName.bind(this);
+    this.onChangeTripsDescription = this.onChangeTripsDescription.bind(this);
+    this.onChangeTripsDifficulty = this.onChangeTripsDifficulty.bind(this);
+    this.onChangeTripsDays = this.onChangeTripsDays.bind(this);
+    this.onChangeTripsType = this.onChangeTripsType.bind(this);
+    this.onChangeTripsX = this.onChangeTripsX.bind(this);
+    this.onChangeTripsY = this.onChangeTripsY.bind(this);
+    this.findTrip = this.findTrip.bind(this);
+  }
+  onChangeTripsName(e) {
+    this.setState({
+        trips_name: e.target.value
+    });
+  }
+  onChangeTripsDescription(e) {
+    this.setState({
+      trips_description: e.target.value
+    });
+  }
+  onChangeTripsDifficulty(e) {
+    this.setState({
+      trips_difficulty: e.target.value
+    });
+  }
+  onChangeTripsDays(e) {
+    this.setState({
+      trips_days: e.target.value
+    });
+  }
+  onChangeTripsX(e) {
+    this.setState({
+      trips_x: e.target.value
+    });
+  }
+  onChangeTripsY(e) {
+    this.setState({
+      trips_y: e.target.value
+    });
+  }
+  onChangeTripsType(e) {
+    this.setState({
+      trips_type: e.target.value
+    });
+  }
+  onChangeTripsDistance(e) {
+    this.setState({
+      trips_distance: e.target.value
+    });
   }
   componentDidMount() {
     const app = Realm.App.getApp("tripwizard-lxwwv"); 
@@ -139,7 +143,43 @@ class Home extends React.Component {
     })
   }
   findTrip(){
-    
+    //update trips back to default
+    const app = Realm.App.getApp("tripwizard-lxwwv"); 
+    async function loginAnonymous() {
+      // Create an anonymous credential
+      const credentials = Realm.Credentials.anonymous();
+      try {
+        // Authenticate the user
+        const user = await app.logIn(credentials);
+        return user
+      } catch(err) {
+        console.error("Failed to log in", err);
+      }
+    }
+    loginAnonymous().then(user => {
+      console.log("Successfully logged in!", user)
+    }).then(() => {
+      const mongodb = app.currentUser.mongoClient("mongodb-atlas");
+      const trips = mongodb.db("myFirstDatabase").collection("trips");
+      const hikes = trips.find()
+      return hikes;
+    }).then((hikes) =>{
+      this.state.trips = hikes;
+    }).then(()=>{
+
+    //Then do any new trip setting
+    var i = 0;
+    var newtrips = []
+    while (i < this.state.trips.length){
+      let curTrip = this.state.trips[i]
+      if(curTrip.trips_type == this.state.trips_type){
+        newtrips.push(curTrip)
+      }
+      i = i + 1;
+    }
+    this.setState({trips: newtrips})
+    this.forceUpdate()
+    })
   }
   render(){
   return (
@@ -172,7 +212,9 @@ class Home extends React.Component {
               <Col>
                 <Form.Group>
                   <Form.Label>Trip Type</Form.Label>
-                  <Form.Control as="select">
+                  <Form.Control as="select"
+                    onChange={this.onChangeTripsType}
+                  >
                     <option>Hiking</option>
                     <option>Backpacking</option>
                     <option>Climbing</option>
@@ -183,7 +225,10 @@ class Home extends React.Component {
               </Col>
               <Col>
                 Trip Duration (days)
-                <Stepper />
+                <FormControl 
+                type = "number"
+                onChange={this.onChangeTripsDays}
+                />
               </Col>
             </Row>
             <Row>
@@ -193,6 +238,7 @@ class Home extends React.Component {
                   <Form.Control as="select"
                   id = "difficulty"
                   name = "difficulty"
+                  onChange={this.onChangeTripsDifficulty}
                   required
                   >
                     <option>Beginner</option>
@@ -206,7 +252,8 @@ class Home extends React.Component {
                   <Form.Group>
                     <Form.Label>Travel Distance (miles)</Form.Label>
                     <Form.Control
-                     type="number"/>
+                      onChange={this.onChangeTripsDistance}
+                      type="number"/>
                   </Form.Group>
               </Col>
             </Row>
@@ -215,6 +262,7 @@ class Home extends React.Component {
                 <Form.Group>
                   <Form.Label>Start Location (x-coord)</Form.Label>
                   <Form.Control
+                    onChange={this.onChangeTripsX}
                     type="number"/>
                 </Form.Group>
               </Col>
@@ -222,6 +270,7 @@ class Home extends React.Component {
                 <Form.Group>
                   <Form.Label>Start Location (y-coord)</Form.Label>
                   <Form.Control
+                    onChange={this.onChangeTripsY}
                     type="number"/>
                 </Form.Group>
               </Col>
