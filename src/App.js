@@ -5,11 +5,6 @@ import mount from "./mountain2.jpg";
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import * as Realm from "realm-web"
-// import mongoose from "mongoose"
-
-// const bodyParser = require('body-parser');
-// const mongoose = require('mongoose');
-// let Trips = require('./trips.model')
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
@@ -103,74 +98,16 @@ const Trips = props => (
       <td>{props.trips.trips_type}</td>
       <td>{props.trips.trips_x}</td>
       <td>{props.trips.trips_y}</td>
-      {/* <td>
-        <Link to={"/edit/"+props.trips._id}>Edit</Link> 
-      </td> */}
   </tr>
 )
-
-
-// Create a component that lets an anonymous user log in
-// const APP_ID = "tripwizard-lxwwv"
-// const app = new Realm.App({ id: APP_ID });
-
-
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      trips: [], //to be moved to the trip find page
-      // user : app.currentUser
-
+      trips: [], 
     };
   }
-  // setUser(user2){
-  //   this.state.user = user2
-  // }
   componentDidMount() {
-    // const bodyParser = require('body-parser');
-    // const mongoose = require('mongoose');
-    // let Trips = require('./trips.model')
-    // const URI1 = 'mongodb+srv://alexlink404:';
-    // const URI2 = 'turtles@cluster0.8sigs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-    // // mongoose.connect(URI1 + URI2, { useNewUrlParser: true });
-    // const connection = mongoose.connection;connection.once('open', function() {
-    //     console.log("MongoDB database connection established successfully");
-    // })
-    // let url =  `https://realm.mongodb.com/api/client/v2.0/app/${APP_ID}/trips`
-    // loginAnonymous()
-    // const mongodb = context.services.get("mongodb-atlas");
-    // const tripsCollection = mongodb.db("myFirstDatabase").collection("trips");
-    // console.log(tripsCollection)
-    // this.state.user = app.logIn(Realm.Credentials.anonymous())
-    // console.log(app.currentUser.customData.memberOf)
-    // this.setState({trips: app.currentUser.customData.memberOf});
-    // fetch(url, { 
-    //   method: 'GET',
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Accept: "application/json"
-    //   }
-    // })
-    // .then(res => res.json())
-    // .then((response) => {
-    //   console.log("response from mongodb: ", response);
-    //   this.setState({trips: response});
-    // })
-    // .catch(error => {
-    //   console.log("There was an error with the mongodb request: ", error);
-    // });
-    // axios.get('http://localhost:'+PORT+'/trips/')
-    //     .then(response => {
-    //         this.setState({ trips: response.data });
-    //     })
-    //     .catch(function (error){
-    //         console.log(error);
-    // //     })
-    // const id = "tripwizard-lxwwv";
-    // const config = {
-    //   id,
-    // };
     const app = Realm.App.getApp("tripwizard-lxwwv"); 
     async function loginAnonymous() {
       // Create an anonymous credential
@@ -178,8 +115,6 @@ class Home extends React.Component {
       try {
         // Authenticate the user
         const user = await app.logIn(credentials);
-        // `App.currentUser` updates to match the logged in user
-        // assert(user.id === app.currentUser.id)
         return user
       } catch(err) {
         console.error("Failed to log in", err);
@@ -202,6 +137,9 @@ class Home extends React.Component {
     return this.state.trips.map(function(currentTrips, i){
         return <Trips trips={currentTrips} key={i} />;
     })
+  }
+  findTrip(){
+    
   }
   render(){
   return (
@@ -294,7 +232,7 @@ class Home extends React.Component {
                   as={Link}
                   to= "/"
                   variant="success"
-                  // onClick={this.addTrip}
+                  onClick={this.findTrip}
                 >
                   Find me a Trip!
                 </Button>
@@ -321,7 +259,6 @@ class Home extends React.Component {
                       <th>Type</th>
                       <th>X</th>
                       <th>Y</th>
-                      <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -411,8 +348,6 @@ class CreateTrip extends React.Component {
       try {
         // Authenticate the user
         const user = await app.logIn(credentials);
-        // `App.currentUser` updates to match the logged in user
-        // assert(user.id === app.currentUser.id)
         return user
       } catch(err) {
         console.error("Failed to log in", err);
@@ -428,10 +363,6 @@ class CreateTrip extends React.Component {
     }).then((hikes) =>{
       console.log("Inserted: ", hikes)
     })
-
-    // axios.post('http://localhost:'+PORT+'/trips/add', newTrips)
-    //         .then(res => console.log(res.data));
-
     this.setState({
       trips_name: '',
       trips_description: '',
@@ -582,18 +513,12 @@ class App extends React.Component {
     super(props);
     this.state = {
     };
-    // this.handleChange = this.handleChange.bind(this);
   }
-  
-  // handleChange(event) {
-  //   // Wat
-  // }
   render() {
   return (
     <Router>
       <Route path="/" exact component={Home} />
       <Route path="/create" component={CreateTrip} />
-      {/* <Route path="/find" component={FindTrip} /> */}
     </Router>
   );
   }
