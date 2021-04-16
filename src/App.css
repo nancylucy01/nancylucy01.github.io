@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  background-color: #a6d191;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .App-logo {
@@ -13,19 +16,43 @@
   }
 }
 
+.App-datePicker{
+  font-size: calc(14px + 2vmin);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+}
+
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
+  /* background-color: #858585;
+  min-height: 100vh; */
+  /* display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
+  font-size: calc(14px + 2vmin);
+  font-family:cursive
+  /* color: white; */
+}
+.App-text {
+  /* background-color: #858585;
+  min-height: 100vh; */
+  /* display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; */
   font-size: calc(10px + 2vmin);
-  color: white;
+  font-family:'Times New Roman', Times, serif
+  /* color: white; */
+}
+.App-container {
+  /* background-color: #858585 */
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .App-link {
   color: #61dafb;
+  font-family:'Times New Roman', Times, serif
 }
 
 @keyframes App-logo-spin {
