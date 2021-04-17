@@ -5,38 +5,7 @@ import mount from "./mountain2.jpg";
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import * as Realm from "realm-web"
-class SearchBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: ''
-    };
-    //To handle changes to an alternate 'this', create a parent class and have each update in render
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
 
-  handleChange(event) {
-    this.setState({ value: event.target.value });
-  }
-
-  handleSubmit(event) {
-    event.preventDefault()
-  }
-  render() {
-    return (
-      <div>
-        
-        <FormControl 
-        type="text" 
-        placeholder="Search Trips..." 
-        onChange={this.handleChange} 
-        onSubmit={this.handleSubmit}
-        />
-      </div>
-    )
-  }
-}
 const Trips = props => (
   <tr>
       <td>{props.trips.trips_name}</td>
@@ -60,7 +29,8 @@ class Home extends React.Component {
       trips_x: 0,
       trips_y: 0,
       trips_type: 'Hiking',
-      trips_distance: 'Hiking'
+      trips_distance: 0,
+      trips_search: ''
     }
     this.onChangeTripsName = this.onChangeTripsName.bind(this);
     this.onChangeTripsDescription = this.onChangeTripsDescription.bind(this);
@@ -70,6 +40,15 @@ class Home extends React.Component {
     this.onChangeTripsX = this.onChangeTripsX.bind(this);
     this.onChangeTripsY = this.onChangeTripsY.bind(this);
     this.findTrip = this.findTrip.bind(this);
+    this.searchTrip = this.searchTrip.bind(this);
+    this.onChangeTripsSearch = this.onChangeTripsSearch.bind(this);
+  }
+  onChangeTripsSearch(e) {
+    e.preventDefault();
+    this.setState({
+        trips_search: e.target.value
+    });
+    this.searchTrip()
   }
   onChangeTripsName(e) {
     this.setState({
@@ -181,6 +160,50 @@ class Home extends React.Component {
     this.forceUpdate()
     })
   }
+  searchTrip(){
+    //update trips back to default
+    // event.preventDefault();
+    const app = Realm.App.getApp("tripwizard-lxwwv"); 
+    async function loginAnonymous() {
+      // Create an anonymous credential
+      const credentials = Realm.Credentials.anonymous();
+      try {
+        // Authenticate the user
+        const user = await app.logIn(credentials);
+        return user
+      } catch(err) {
+        console.error("Failed to log in", err);
+      }
+    }
+    loginAnonymous().then(user => {
+      console.log("Successfully logged in!", user)
+    }).then(() => {
+      const mongodb = app.currentUser.mongoClient("mongodb-atlas");
+      const trips = mongodb.db("myFirstDatabase").collection("trips");
+      const hikes = trips.find({})
+      return hikes;
+    }).then((hikes) =>{
+      this.state.trips = hikes;
+    }).then(()=>{
+    //Then do any new trip setting
+    var i = 0;
+    var newtrips = []
+    while (i < this.state.trips.length){
+      let curTrip = this.state.trips[i]
+      console.log(this.state.trips_search)
+      console.log(curTrip.trips_name)
+      console.log(curTrip.trips_name.search(String(this.state.trips_search)))
+      if(String(curTrip.trips_name).search(String(this.state.trips_search))>=0){
+        console.log("addedTrip")
+        newtrips.push(curTrip)
+      }
+      i = i + 1;
+    }
+    this.setState({trips: newtrips})
+    this.forceUpdate()
+    })
+    // event.preventDefault();
+  }
   render(){
   return (
     <div className="App">
@@ -191,8 +214,11 @@ class Home extends React.Component {
         <Row>
           <Col>
             <Form.Group>
-              <SearchBar 
-              ></SearchBar>
+            <FormControl 
+            type="text" 
+            placeholder="Search Trips..." 
+            onSubmit={this.onChangeTripsSearch}
+            />
             </Form.Group>
           </Col>
           <Col className="App-header">Trip OARganizer</Col>
@@ -433,10 +459,6 @@ class CreateTrip extends React.Component {
       >
         <Row>
           <Col>
-            <Form.Group>
-              <SearchBar 
-              ></SearchBar>
-            </Form.Group>
           </Col>
           <Col className="App-header">Trip OARganizer</Col>
           <Col>
