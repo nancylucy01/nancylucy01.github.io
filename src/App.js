@@ -35,8 +35,8 @@ class Home extends React.Component {
       trips_description: "",
       trips_difficulty: "Beginner",
       trips_days: 0,
-      trips_x: 0,
-      trips_y: 0,
+      trips_x: 29.62669,
+      trips_y: -82.35617,
       trips_type: "Hiking",
       trips_distance: 0,
       trips_search: "",
@@ -44,6 +44,7 @@ class Home extends React.Component {
     this.onChangeTripsName = this.onChangeTripsName.bind(this);
     this.onChangeTripsDescription = this.onChangeTripsDescription.bind(this);
     this.onChangeTripsDifficulty = this.onChangeTripsDifficulty.bind(this);
+    this.onChangeTripsDistance = this.onChangeTripsDistance.bind(this);
     this.onChangeTripsDays = this.onChangeTripsDays.bind(this);
     this.onChangeTripsType = this.onChangeTripsType.bind(this);
     this.onChangeTripsX = this.onChangeTripsX.bind(this);
@@ -164,6 +165,7 @@ class Home extends React.Component {
         //Then do any new trip setting
         console.log(this.state.trips_search.length);
         if (this.state.trips_search === "") {
+          //Trip Type Filter
           var i = 0;
           var newtrips = [];
           while (i < this.state.trips.length) {
@@ -173,8 +175,64 @@ class Home extends React.Component {
             }
             i = i + 1;
           }
-          this.setState({ trips: newtrips });
+          //Distance Filter
+          if (this.state.trips_distance != 0){
+            i = 0;
+            //Max Travel Distance = 69*sqrt(degreesX^2+degreesY^2)
+            //(Max Travel Distance/69)^2 = degreesX^2+degreesY^2
+            let maxDeg = (this.state.trips_distance / 69)*(this.state.trips_distance / 69)
+            var newtrips2 = [];
+            while (i < newtrips.length) {
+              let curTrip = newtrips[i];
+              let xDist = curTrip.trips_x-this.state.trips_x
+              let yDist = curTrip.trips_y-this.state.trips_y
+              let curDeg = (xDist*xDist)+(yDist*yDist)
+              if (curDeg <= maxDeg) {
+                newtrips2.push(curTrip);
+              }
+              i = i + 1;
+            }
+            //Days Sort
+            if (this.state.trips_days != 0){
+              var newtrips3 = [];
+              var curDaysDiff = 0
+              while (curDaysDiff < 21){
+                i=0
+                while (i < newtrips2.length) {
+                  if (Math.abs(newtrips2[i].trips_days-this.state.trips_days) == curDaysDiff) {
+                    newtrips3.push(newtrips2[i]);
+                  }
+                  i = i + 1;
+                }
+                curDaysDiff = curDaysDiff + 1;
+              }
+              this.setState({ trips: newtrips3 }); 
+            }else{
+              this.setState({ trips: newtrips2 }); 
+            }
+          }else{
+            
+            //No distance Days Sort
+            if (this.state.trips_days != 0){
+              var newtrips3 = [];
+              var curDaysDiff = 0
+              while (curDaysDiff < 21){
+                i=0
+                while (i < newtrips.length) {
+                  if (Math.abs(newtrips[i].trips_days-this.state.trips_days) == curDaysDiff) {
+                    newtrips3.push(newtrips[i]);
+                  }
+                  i = i + 1;
+                }
+                curDaysDiff = curDaysDiff + 1;
+              }
+              this.setState({ trips: newtrips3 }); 
+            }else{
+              this.setState({ trips: newtrips }); 
+            }
+        }
           this.forceUpdate();
+
         } else {
           this.searchTrip();
         }
@@ -182,46 +240,15 @@ class Home extends React.Component {
   }
 
   searchTrip() {
-    //update trips back to default
-    // event.preventDefault();
-    const app = Realm.App.getApp("tripwizard-lxwwv");
-    async function loginAnonymous() {
-      // Create an anonymous credential
-      const credentials = Realm.Credentials.anonymous();
-      try {
-        // Authenticate the user
-        const user = await app.logIn(credentials);
-        return user;
-      } catch (err) {
-        console.error("Failed to log in", err);
-      }
-    }
-    loginAnonymous()
-      .then((user) => {
-        console.log("Successfully logged in!", user);
-      })
-      .then(() => {
-        const mongodb = app.currentUser.mongoClient("mongodb-atlas");
-        const trips = mongodb.db("myFirstDatabase").collection("trips");
-        const hikes = trips.find({});
-        return hikes;
-      })
-      .then((hikes) => {
-        this.state.trips = hikes;
-      })
-      .then(() => {
-        //Then do any new trip setting
         var i = 0;
         var newtrips = [];
         while (i < this.state.trips.length) {
           let curTrip = this.state.trips[i];
           console.log(
-            curTrip.trips_name.search(String(this.state.trips_search))
+            curTrip.trips_name.toLowerCase().search(String(this.state.trips_search).toLowerCase())
           );
           if (
-            String(curTrip.trips_name).search(
-              String(this.state.trips_search)
-            ) >= 0
+            curTrip.trips_name.toLowerCase().search(String(this.state.trips_search).toLowerCase()) >= 0
           ) {
             console.log("addedTrip");
             newtrips.push(curTrip);
@@ -230,8 +257,6 @@ class Home extends React.Component {
         }
         this.setState({ trips: newtrips });
         this.forceUpdate();
-      });
-    // event.preventDefault();
   }
   render() {
     return (
@@ -276,7 +301,7 @@ class Home extends React.Component {
                     </Form.Group>
                   </Col>
                   <Col>
-                    Trip Duration (days)
+                    <Form.Label>Trip Duration (days)</Form.Label>
                     <FormControl
                       type="number"
                       onChange={this.onChangeTripsDays}
@@ -303,7 +328,7 @@ class Home extends React.Component {
                   </Col>
                   <Col>
                     <Form.Group>
-                      <Form.Label>Travel Distance (miles)</Form.Label>
+                      <Form.Label>Max Travel Distance (miles)</Form.Label>
                       <Form.Control
                         onChange={this.onChangeTripsDistance}
                         type="number"
@@ -316,6 +341,7 @@ class Home extends React.Component {
                     <Form.Group>
                       <Form.Label>Start Location (longitude)</Form.Label>
                       <Form.Control
+                        value = {29.62669}
                         onChange={this.onChangeTripsX}
                         type="number"
                       />
@@ -325,6 +351,7 @@ class Home extends React.Component {
                     <Form.Group>
                       <Form.Label>Start Location (latitude)</Form.Label>
                       <Form.Control
+                        value = {-82.35617}
                         onChange={this.onChangeTripsY}
                         type="number"
                       />
@@ -359,8 +386,8 @@ class Home extends React.Component {
                   <th>Difficulty</th>
                   <th>Days</th>
                   <th>Type</th>
-                  <th>X</th>
-                  <th>Y</th>
+                  <th>Longitude</th>
+                  <th>Latitude</th>
                 </tr>
               </thead>
               <tbody>{this.tripsList()}</tbody>
